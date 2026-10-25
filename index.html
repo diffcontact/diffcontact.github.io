@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Differentiable Contact Dynamics for Legged Locomotion</title>
+  <meta name="description" content="A smooth analytic gradient for frictional contact, relaxed only in the backward pass, for policy learning and contact-implicit trajectory optimization in legged locomotion.">
+  <!-- TODO(public release): use absolute URLs for og:image / og:url once the GitHub Pages address is known -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Differentiable Contact Dynamics for Legged Locomotion: Policy Learning and Contact-Implicit Trajectory Optimization">
+  <meta property="og:description" content="A smooth analytic contact gradient, relaxed only in the backward pass: quadruped policies from 100,000 samples in under 2 min, and contact-rich trajectory optimization.">
+  <meta property="og:image" content="assets/figures/fig5.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%233d6db3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="top" aria-label="Sections">
+  <div class="wrap">
+    <a href="#abstract">Abstract</a>
+    <a href="#videos">Videos</a>
+    <a href="#method">Method</a>
+    <a href="#policy">Policy Learning</a>
+    <a href="#cito">Trajectory Optimization</a>
+    <a href="#bibtex">BibTeX</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Differentiable Contact Dynamics for Legged Locomotion
+      <span class="sub">Policy Learning and Contact-Implicit Trajectory Optimization</span></h1>
+    <!-- TODO(public release): replace with the author list (with links) and affiliations -->
+    <p class="authors">Anonymous Author(s)</p>
+    <p class="affil">Affiliations to be added</p>
+    <div class="links">
+      <!-- TODO(public release): set href to the arXiv abstract page and drop the "disabled" class -->
+      <a class="btn disabled" aria-disabled="true" title="Available after the arXiv release">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>
+        Paper (arXiv, coming soon)</a>
+      <a class="btn" href="#videos">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+        Videos</a>
+      <!-- <a class="btn" href="https://github.com/OWNER/REPO"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.4 1.1 2.9.8.1-.6.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg>Code</a> -->
+      <a class="btn" href="#bibtex">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
+        BibTeX</a>
+    </div>
+
+    <div class="teaser">
+      <video autoplay muted loop playsinline preload="auto" poster="assets/videos/teaser_poster.jpg"
+             aria-label="Hardware highlights: trotting, pacing, debris, push recovery, low-friction terrain">
+        <source src="assets/videos/teaser.mp4" type="video/mp4">
+      </video>
+      <p class="label">Hardware: trotting, pacing, debris, push recovery, and low-friction terrain, with policies trained
+        in under 3 min and deployed without fine-tuning.</p>
+    </div>
+
+    <p class="tldr"><strong>TL;DR</strong> &mdash; The exact contact gradient only describes changes within the
+      current contact mode. We relax the full frictional contact law along its central path, <em>only in the backward
+      pass</em>: the simulation stays hard-contact, and the gradient stays smooth across separation, clamping, and
+      sliding.</p>
+
+    <div class="stats">
+      <div class="stat"><b>&lt; 2 min</b><span>of training (100,000 samples) for trot and pace, deployed on hardware
+        without fine-tuning</span></div>
+      <div class="stat"><b>1 vs. 128</b><span>environments needed to learn the trot: BPTT with the proposed gradient
+        vs. PPO</span></div>
+      <div class="stat"><b>3.4&times; / 2.5&times;</b><span>larger recoverable pulls in contact-implicit MPC than the
+        exact / Signorini-relaxed gradients</span></div>
+      <div class="stat"><b>116 &rarr; 39</b><span>cost of one CITO problem in 25 DDP iterations (exact: 98,
+        Signorini-relaxed: 95)</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="abstract">
+  <div class="wrap text">
+    <h2>Abstract</h2>
+    <p class="abstract">This paper proposes a smooth analytic gradient for frictional contact and applies it to policy
+      learning and contact-implicit trajectory optimization for legged locomotion. The exact contact sensitivity is
+      available in closed form but describes changes within the current contact mode, providing no first-order
+      information toward neighboring contact modes. The proposed gradient replaces this sensitivity only in the
+      backward pass, leaving the hard-contact forward solve unchanged and the realized rollout feasible. A central-path
+      relaxation of the de Saxcé-corrected second-order-cone complementarity problem for Coulomb friction smooths the
+      conditions defining the separating, clamping, and sliding modes. The relaxed sensitivity is evaluated at a point
+      on the central path obtained by a Newton iteration initialized from the hard-contact solution. The sensitivity
+      remains continuous through contact-mode transitions and converges to the exact sensitivity as the relaxation
+      vanishes. Using 100,000 samples and less than 2 min of training on a desktop PC, policy learning with the
+      proposed gradient produces a policy that transfers to hardware without fine-tuning. On hardware, the robot under a
+      trotting policy withstands pushes and traverses debris and slippery ground. In trajectory optimization, the
+      proposed gradient reaches contact-rich solutions missed by exact and Signorini-relaxed gradients.</p>
+  </div>
+</section>
+
+<section id="videos" class="alt">
+  <div class="wrap">
+    <span class="kicker">Multimedia</span>
+    <h2>Videos</h2>
+    <div class="videos">
+      <article class="vcard" id="video1">
+        <video controls preload="none" playsinline poster="assets/videos/video1_poster.jpg">
+          <source src="assets/videos/video1.mp4" type="video/mp4">
+        </video>
+        <div class="body">
+          <span class="tag">Video 1 &middot; Policy learning &middot; 1:48</span>
+          <h4>Hardware Demonstrations</h4>
+          <p>Hardware transfer of trotting, pacing, and gait-free policies, including trotting under external pushes,
+            over debris, and on slippery ground.</p>
+        </div>
+      </article>
+      <article class="vcard" id="video2">
+        <video controls preload="none" playsinline poster="assets/videos/video2_poster.jpg">
+          <source src="assets/videos/video2.mp4" type="video/mp4">
+        </video>
+        <div class="body">
+          <span class="tag">Video 2 &middot; Policy learning &middot; 1:33</span>
+          <h4>Comparison with Model-Free Reinforcement Learning</h4>
+          <p>BPTT with the proposed gradient against PPO on the trotting command-tracking task.</p>
+        </div>
+      </article>
+      <article class="vcard" id="video3">
+        <video controls preload="none" playsinline poster="assets/videos/video3_poster.jpg">
+          <source src="assets/videos/video3.mp4" type="video/mp4">
+        </video>
+        <div class="body">
+          <span class="tag">Video 3 &middot; Trajectory optimization &middot; 1:42</span>
+          <h4>Recovery from Unmodeled External Pulls</h4>
+          <p>Three backward contact gradients in contact-implicit MPC under unmodeled external pulls in simulation.</p>
+        </div>
+      </article>
+      <article class="vcard" id="video4">
+        <video controls preload="none" playsinline poster="assets/videos/video4_poster.jpg">
+          <source src="assets/videos/video4.mp4" type="video/mp4">
+        </video>
+        <div class="body">
+          <span class="tag">Video 4 &middot; Trajectory optimization &middot; 1:08</span>
+          <h4>Base-Pose Reaching via CITO</h4>
+          <p>The three gradients on translation, yaw-rotation, and pitch-rotation tasks without prescribed contact modes
+            or foothold locations.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <span class="kicker">Method</span>
+    <h2>Hard contact forward, relaxed contact backward</h2>
+    <p class="lead">The forward simulation stays a hard-contact solve; only the backward pass changes. With the de Saxcé
+      correction, the Signorini condition, the Coulomb friction cone, and maximum dissipation form one
+      second-order-cone complementarity condition, λ̃ ∘ σ̃ = 0. We relax it along its central path, λ̃ ∘ σ̃ = ρe, and
+      differentiate at the relaxed point, which a Newton iteration finds from the hard-contact solution.</p>
+
+    <figure>
+      <a href="assets/figures/fig5.jpg" target="_blank" rel="noopener"><img src="assets/figures/fig5.jpg" width="2084" height="770" loading="lazy" decoding="async"
+        alt="Framework overview: hard-contact forward solve, relaxed backward pass along the central path, and the resulting Jacobians used for policy learning and trajectory optimization"></a>
+      <figcaption><b>Fig. 5.</b> Overview of the proposed differentiable contact framework. The hard-contact solution at
+        ρ = 0 is relaxed along the central path to ρ &gt; 0, and analytic differentiation yields the relaxed contact
+        sensitivity and transition Jacobians (f<sub>x</sub>, f<sub>u</sub>), used for BPTT policy learning and
+        DDP-based trajectory optimization.</figcaption>
+    </figure>
+
+    <figure class="side">
+      <a href="assets/figures/fig1.png" target="_blank" rel="noopener"><img src="assets/figures/fig1.png" width="1030" height="1317" loading="lazy" decoding="async"
+        alt="Point-mass CITO tasks: lift-off, traverse, and friction braking, with costs and contact-mode sequences for the three gradients"></a>
+      <div class="side-text">
+        <h3>Why the backward gradient matters</h3>
+        <p>Even for a single point mass, the backward gradient decides which contact modes the optimizer can reach. With
+          the same hard-contact forward dynamics, only the proposed full-cone relaxation finds the optimal contact-mode
+          sequence in all three tasks.</p>
+      </div>
+      <figcaption><b>Fig. 1.</b> Converged iLQR solutions for three CITO tasks over a 30-step horizon with hard-contact
+        forward dynamics: (a) lift-off, (b) traverse, and (c) friction braking. The solutions differ only in the
+        backward gradient. An MIQP over the contact-mode sequence provides the reference trajectory (dashed) and cost
+        normalization.</figcaption>
+    </figure>
+
+    <h3>Relaxing the full cone, not only the normal direction</h3>
+    <p>On the central path, the relaxed impulse and contact velocity lie strictly inside their cones, so a clamped
+      contact receives first-order directions toward both separation and sliding.</p>
+    <figure>
+      <a href="assets/figures/fig2.png" target="_blank" rel="noopener"><img src="assets/figures/fig2.png" width="2085" height="648" loading="lazy" decoding="async"
+        alt="Relaxed contact solutions along the central path in the clamping, separating, and sliding regimes"></a>
+      <figcaption><b>Fig. 2.</b> Central-path relaxation of the exact contact solutions in the clamping, separating, and
+        sliding regimes for a two-dimensional contact with μ = 0.8: contact impulse λ (top) and de Saxcé-corrected
+        contact velocity σ + Γ<sub>μ</sub>(σ) (bottom). Black markers denote the exact solution; darker markers
+        correspond to larger ρ.</figcaption>
+    </figure>
+
+    <h3>Smooth through contact-mode changes, from one solve</h3>
+    <p>The exact sensitivity jumps at mode boundaries. Randomized smoothing needs 128 perturbed contact solves per point
+      to smooth it; the proposed sensitivity is smooth from a single Newton solve.</p>
+    <figure>
+      <a href="assets/figures/fig3.png" target="_blank" rel="noopener"><img src="assets/figures/fig3.png" width="2079" height="580" loading="lazy" decoding="async"
+        alt="Sensitivities of a single contact versus free normal velocity under the exact, randomized-smoothing, and proposed gradients"></a>
+      <figcaption><b>Fig. 3.</b> Sensitivities of a single contact under the exact, randomized-smoothing, and proposed
+        gradients with respect to the free normal velocity b<sub>N</sub>. As b<sub>N</sub> increases, the hard-contact
+        solution changes mode from clamping to sliding and then to separating.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="policy" class="alt">
+  <div class="wrap">
+    <span class="kicker">Policy learning</span>
+    <h2>Backpropagation through time on a quadruped</h2>
+    <p class="lead">Velocity-tracking policies are trained by differentiating 0.5-s rollouts (20 control steps) through
+      the simulator. Only the backward contact gradient changes between runs.</p>
+    <div class="legend" aria-label="Line colours">
+      <span><i style="background:var(--norel)"></i>No Relaxation (exact)</span>
+      <span><i style="background:var(--sig)"></i>Signorini-Relaxed</span>
+      <span><i style="background:var(--accent)"></i>Proposed</span>
+    </div>
+
+    <h3>Training across contact gradients</h3>
+    <p>Only the proposed gradient learns both gait-free tasks, at nominal and at low friction. For trot and pace, it
+      attains the lowest median evaluation cost.</p>
+    <figure>
+      <a href="assets/figures/fig6.png" target="_blank" rel="noopener"><img src="assets/figures/fig6.png" width="2087" height="1041" loading="lazy" decoding="async"
+        alt="Training reward, evaluation-cost violins, and fall rate versus friction for four locomotion tasks and three gradients"></a>
+      <figcaption><b>Fig. 6.</b> Training with three backward contact gradients on four locomotion tasks (10 seeds): (a)
+        training reward, (b) evaluation cost, and (c) evaluation fall rate over an extended friction range, with
+        out-of-distribution friction shaded gray.</figcaption>
+    </figure>
+
+    <figure class="side">
+      <a href="assets/figures/fig7.jpg" target="_blank" rel="noopener"><img src="assets/figures/fig7.jpg" width="1028" height="712" loading="lazy" decoding="async"
+        alt="Hardware snapshots of trot, pace, and gait-free locomotion with estimated foot-contact patterns"></a>
+      <div class="side-text">
+        <h3>Hardware deployment</h3>
+        <p>Policies trained with a single simulation environment transfer to the 45-kg quadruped without fine-tuning:
+          trot and pace after 100,000 samples and 108 s of training, the low-friction gait-free policy after 160,000
+          samples and 172 s.</p>
+        <a class="watch" href="#video1"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch Video 1</a>
+      </div>
+      <figcaption><b>Fig. 7.</b> Hardware deployment of BPTT-trained locomotion policies: (a) trot, (b) pace, and (c)
+        gait-free locomotion, with estimated foot-contact patterns.</figcaption>
+    </figure>
+
+    <h3>Robustness on hardware</h3>
+    <p>The trotting policy traverses scattered debris, recovers from external pushes, and keeps walking on a
+      boric-acid-coated surface with μ ≈ 0.25, below its training range.</p>
+    <figure>
+      <a href="assets/figures/fig8.jpg" target="_blank" rel="noopener"><img src="assets/figures/fig8.jpg" width="2081" height="814" loading="lazy" decoding="async"
+        alt="Hardware robustness tests: debris traversal, push recovery with tracking-error plot, and low-friction locomotion with attitude and contact plots"></a>
+      <figcaption><b>Fig. 8.</b> Hardware robustness tests of trotting policies trained with 100,000 samples in under 2
+        min: (a) scattered debris, (b) external pushes, with the lateral-velocity tracking error over 14 trials, and (c)
+        a low-friction surface.</figcaption>
+    </figure>
+
+    <h3>Comparison with model-free reinforcement learning</h3>
+    <p>BPTT with the proposed gradient learns the trot with one environment, whereas PPO first learns it with 128
+      environments: about 10<sup>5</sup> versus 10<sup>7</sup> samples.
+      <a class="watch" href="#video2"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch Video 2</a></p>
+    <figure>
+      <a href="assets/figures/fig9.png" target="_blank" rel="noopener"><img src="assets/figures/fig9.png" width="2081" height="441" loading="lazy" decoding="async"
+        alt="Training reward of BPTT and PPO for different numbers of environments, and reward versus data samples"></a>
+      <figcaption><b>Fig. 9.</b> Training-reward comparison between BPTT and PPO on the trot command-tracking task: (a)
+        BPTT and (b) PPO for different numbers of environments, and (c) training reward versus cumulative environment
+        steps.</figcaption>
+    </figure>
+
+    <figure class="side flip">
+      <a href="assets/figures/fig10.png" target="_blank" rel="noopener"><img src="assets/figures/fig10.png" width="1025" height="837" loading="lazy" decoding="async"
+        alt="Velocity-tracking errors, evaluation cost, and training wall-clock time versus number of environments for BPTT and PPO"></a>
+      <div class="side-text">
+        <h3>9.8 times less wall-clock time</h3>
+        <p>In these smallest settings, BPTT trains in 1.8 min and PPO in 17.7 min, with comparable tracking accuracy and
+          evaluation cost.</p>
+      </div>
+      <figcaption><b>Fig. 10.</b> Comparison of BPTT and PPO in trained-policy evaluation and training wall-clock time
+        versus the number of environments: (a) linear- and (b) angular-velocity tracking RMSE, (c) evaluation cost, and
+        (d) training wall-clock time.</figcaption>
+    </figure>
+
+    <figure class="side">
+      <a href="assets/figures/fig11.png" target="_blank" rel="noopener"><img src="assets/figures/fig11.png" width="1029" height="513" loading="lazy" decoding="async"
+        alt="Newton convergence curves and spurious-convergence rates for four regularization settings"></a>
+      <div class="side-text">
+        <h3>Newton iteration in the backward pass</h3>
+        <p>The regularized Newton iteration meets the residual tolerance (ε = 10<sup>&minus;10</sup>) within eight
+          iterations in 99.95% of backward contact evaluations.</p>
+      </div>
+      <figcaption><b>Fig. 11.</b> Newton convergence and root selection in the backward contact evaluation during BPTT
+        trotting training.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="cito">
+  <div class="wrap">
+    <span class="kicker">Trajectory optimization</span>
+    <h2>Contact-implicit trajectory optimization</h2>
+    <p class="lead">Shooting-based CITO (DDP) and contact-implicit MPC use the same transition Jacobians. With the
+      proposed gradient, the optimizer can release a clamped contact, by lifting or sliding the foot, and reposition the
+      feet.</p>
+    <div class="legend" aria-label="Line colours">
+      <span><i style="background:var(--norel)"></i>No Relaxation (exact)</span>
+      <span><i style="background:var(--sig)"></i>Signorini-Relaxed</span>
+      <span><i style="background:var(--accent)"></i>Proposed</span>
+    </div>
+
+    <h3>Base-pose reaching without prescribed contact modes</h3>
+    <p>The proposed gradient attains the lowest costs across translation, yaw, and pitch references. With the exact
+      gradient, the feet stay clamped for translations up to 0.7 m and yaw up to 1.0 rad, so the base leans or twists
+      over fixed feet.
+      <a class="watch" href="#video4"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch Video 4</a></p>
+    <figure>
+      <a href="assets/figures/fig12.jpg" target="_blank" rel="noopener"><img src="assets/figures/fig12.jpg" width="2081" height="686" loading="lazy" decoding="async"
+        alt="Average CITO cost versus reference magnitude for translation, yaw, and pitch, with robot renders of the tasks"></a>
+      <figcaption><b>Fig. 12.</b> Comparison of the three backward contact gradients for CITO base-pose reaching: (a)
+        translation, (b) yaw rotation, and (c) pitch rotation. The top row shows the initial standing and reference
+        poses as solid and transparent robots.</figcaption>
+    </figure>
+
+    <h3>One CITO problem, three gradients</h3>
+    <p>From a shared initialization, the proposed gradient reduces the cost from 116 to 39 in 25 DDP iterations: the
+      loaded rear-right foot slides about 0.4 m and reclamps at a new location. With the exact and Signorini-relaxed
+      gradients, the foot stays clamped and the cost only falls to 98 and 95.</p>
+    <figure>
+      <a href="assets/figures/fig13.png" target="_blank" rel="noopener"><img src="assets/figures/fig13.png" width="2081" height="504" loading="lazy" decoding="async"
+        alt="Cost versus DDP iteration, base roll, rear-right foot contact mode, and lateral displacement for the three gradients"></a>
+      <figcaption><b>Fig. 13.</b> Comparison of a single CITO problem over DDP iterations under the three contact
+        gradients: (a) cost, (b) base roll, (c) rear-right (RR) foot contact mode, and (d) RR-foot lateral
+        displacement.</figcaption>
+    </figure>
+
+    <h3>Push recovery under unmodeled pulls</h3>
+    <p>In contact-implicit MPC at 40 Hz, the proposed gradient withstands the largest unmodeled 1-s pulls in every
+      direction: 272 N on average, 3.4 times the exact gradient (81 N) and 2.5 times the Signorini-relaxed gradient
+      (107 N).
+      <a class="watch" href="#video3"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>Watch Video 3</a></p>
+    <figure>
+      <a href="assets/figures/fig14.png" target="_blank" rel="noopener"><img src="assets/figures/fig14.png" width="1931" height="680" loading="lazy" decoding="async"
+        alt="Polar plot of the maximum recoverable pull per direction, and base tilt, planned contact mode, and positions under a 250-N forward pull"></a>
+      <figcaption><b>Fig. 14.</b> Comparison of the three contact gradients in CI-MPC under unmodeled external pulls: (a)
+        maximum pull magnitude over eight nominal directions, and (b)–(d) responses to a 250-N forward
+        pull.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="bibtex" class="alt">
+  <div class="wrap text">
+    <h2>BibTeX</h2>
+    <!-- TODO(public release): replace with the arXiv entry (authors, eprint id) -->
+    <div class="bib">
+      <button type="button" id="copy-bib">Copy</button>
+<pre id="bib-text">@article{anonymous2026differentiable,
+  title   = {Differentiable Contact Dynamics for Legged Locomotion:
+             Policy Learning and Contact-Implicit Trajectory Optimization},
+  author  = {Anonymous Author(s)},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Figures and videos are taken from the paper and its multimedia attachments.</p>
+    <p>Last updated October 2026.</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById("copy-bib").addEventListener("click", function () {
+    var b = this;
+    navigator.clipboard.writeText(document.getElementById("bib-text").textContent).then(function () {
+      b.textContent = "Copied";
+      setTimeout(function () { b.textContent = "Copy"; }, 1500);
+    });
+  });
+</script>
+</body>
+</html>
