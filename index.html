@@ -29,6 +29,7 @@
     <a href="#ppo">Comparison with PPO</a>
     <a href="#cito">CITO</a>
     <a href="#pulls">Pull recovery</a>
+    <a href="#bibtex">BibTeX</a>
   </div>
 </nav>
 
@@ -39,15 +40,10 @@
     <p class="authors">Gijeong Kim, Seungbin Oh, Dongyun Kang, and Hae-Won Park</p>
     <p class="affil">KAIST</p>
     <div class="links">
-      <!-- TODO(public release): set href to the arXiv abstract page and drop the "disabled" class -->
-      <a class="btn disabled" aria-disabled="true" title="Available after the arXiv release">
+      <a class="btn" href="https://arxiv.org/abs/2610.35852">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>
-        Paper (arXiv, coming soon)</a>
+        Paper (arXiv)</a>
       <!-- <a class="btn" href="https://github.com/OWNER/REPO"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.4 1.1 2.9.8.1-.6.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg>Code</a> -->
-      <!-- TODO(public release): restore this button, the BibTeX section, and its nav link with the arXiv entry
-      <a class="btn" href="#bibtex">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
-        BibTeX</a> -->
     </div>
 
     <div class="teaser">
@@ -56,8 +52,8 @@
         <source src="assets/videos/teaser.mp4" type="video/mp4">
       </video>
       <p class="badge">Trained with 100,000 samples in under 2&nbsp;min on a desktop PC</p>
-      <p class="label">Trotting and pacing policies trained with the proposed gradient, deployed on hardware without
-        fine-tuning.</p>
+      <p class="label">Trotting and pacing policies trained with the proposed gradient using 100,000 samples in under
+        2&nbsp;min on a desktop PC, deployed on hardware.</p>
     </div>
   </div>
 </header>
@@ -101,7 +97,7 @@
     <figure>
       <a href="assets/figures/fig2.png" target="_blank" rel="noopener"><img src="assets/figures/fig2.png" width="2085" height="648" loading="lazy" decoding="async"
         alt="Relaxed contact solutions along the central path in the clamping, separating, and sliding regimes"></a>
-      <figcaption><b>Fig. 2.</b> Central-path relaxation of the exact contact solutions in the clamping, separating, and
+      <figcaption><b>Fig. 2 in the paper.</b> Central-path relaxation of the exact contact solutions in the clamping, separating, and
         sliding regimes for a two-dimensional contact with <span data-tex="\mu = 0.8">μ = 0.8</span>. The top row shows
         the contact impulse <span data-tex="\lambda \in \mathcal{K}_\mu">λ ∈ K<sub>μ</sub></span>, and the bottom row
         shows the de&nbsp;Saxcé-corrected contact velocity
@@ -130,7 +126,7 @@
     <figure>
       <a href="assets/figures/fig3.png" target="_blank" rel="noopener"><img src="assets/figures/fig3.png" width="2079" height="580" loading="lazy" decoding="async"
         alt="Sensitivities of a single contact versus free normal velocity under the exact, randomized-smoothing, and proposed gradients"></a>
-      <figcaption><b>Fig. 3.</b> Sensitivities of a single contact under the exact, randomized-smoothing, and proposed
+      <figcaption><b>Fig. 3 in the paper.</b> Sensitivities of a single contact under the exact, randomized-smoothing, and proposed
         gradients: the impulse and contact-velocity components with respect to the free normal velocity
         <span data-tex="b_N">b<sub>N</sub></span>. The point-mass model has diagonal <span data-tex="A">A</span> and
         nonzero free tangential velocity <span data-tex="b_T">b<sub>T</sub></span>. As
@@ -153,7 +149,7 @@
     <figure>
       <a href="assets/figures/fig5.jpg" target="_blank" rel="noopener"><img src="assets/figures/fig5.jpg" width="2084" height="770" loading="lazy" decoding="async"
         alt="Framework overview: hard-contact forward solve, relaxed backward pass along the central path, and the resulting Jacobians used for policy learning and trajectory optimization"></a>
-      <figcaption><b>Fig. 5.</b> Overview of the proposed differentiable contact framework. Given
+      <figcaption><b>Fig. 5 in the paper.</b> Overview of the proposed differentiable contact framework. Given
         <span data-tex="(x_t, u_t)">(x<sub>t</sub>, u<sub>t</sub>)</span>, the hard-contact forward solve determines the
         contact impulse <span data-tex="\lambda">λ</span>, contact velocity <span data-tex="\sigma">σ</span>, and next
         state <span data-tex="x_{t+1}">x<sub>t+1</sub></span> under the realized sliding, clamping, or separating mode.
@@ -333,35 +329,53 @@
   </div>
 </section>
 
-<!-- TODO(public release): restore with the arXiv entry (eprint id), together with the hero button and the nav link
+<!-- the entry as arXiv exports it (arxiv.org/bibtex/2610.35852); the page column fits its title line -->
 <section id="bibtex">
-  <div class="wrap text">
+  <div class="wrap">
     <h2>BibTeX</h2>
     <div class="bib">
       <button type="button" id="copy-bib">Copy</button>
-<pre id="bib-text">@article{kim2026differentiable,
-  title   = {Differentiable Contact Dynamics for Legged Locomotion:
-             Policy Learning and Contact-Implicit Trajectory Optimization},
-  author  = {Kim, Gijeong and Oh, Seungbin and Kang, Dongyun and Park, Hae-Won},
-  journal = {arXiv preprint},
-  year    = {2026}
+<pre id="bib-text">@misc{kim2026differentiablecontactdynamicslegged,
+      title={Differentiable Contact Dynamics for Legged Locomotion: Policy Learning and Contact-Implicit Trajectory Optimization},
+      author={Gijeong Kim and Seungbin Oh and Dongyun Kang and Hae-Won Park},
+      year={2026},
+      eprint={2610.35852},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2610.35852},
 }</pre>
     </div>
   </div>
 </section>
--->
 
 <script>
-  // Inline math: KaTeX (loaded with defer) typesets each [data-tex] element; the element's text is the fallback.
+  // Inline math: KaTeX (loaded with defer) typesets each [data-tex] element; the element's text is the fallback. The
+  // line breaker treats a typeset formula as an inline block and may break between it and a "(" just before it or a
+  // "." just after it, so such punctuation goes into a span with the formula that does not wrap.
   document.addEventListener("DOMContentLoaded", function () {
     if (!window.katex) return;
     [].forEach.call(document.querySelectorAll("[data-tex]"), function (el) {
       katex.render(el.dataset.tex, el, { throwOnError: false });
+      var prev = el.previousSibling, next = el.nextSibling;
+      var open = prev && prev.nodeType === 3 && /[(\[]$/.test(prev.data);
+      var close = next && next.nodeType === 3 && /^[.,;:)\]]+/.exec(next.data);
+      if (!open && !close) return;
+      var span = document.createElement("span");
+      span.style.whiteSpace = "nowrap";
+      el.parentNode.insertBefore(span, el);
+      if (open) {
+        span.appendChild(document.createTextNode(prev.data.slice(-1)));
+        prev.data = prev.data.slice(0, -1);
+      }
+      span.appendChild(el);
+      if (close) {
+        span.appendChild(document.createTextNode(close[0]));
+        next.data = next.data.slice(close[0].length);
+      }
     });
   });
 
-  var copyBib = document.getElementById("copy-bib");   // absent while the BibTeX section is commented out
-  if (copyBib) copyBib.addEventListener("click", function () {
+  document.getElementById("copy-bib").addEventListener("click", function () {
     var b = this;
     navigator.clipboard.writeText(document.getElementById("bib-text").textContent).then(function () {
       b.textContent = "Copied";
