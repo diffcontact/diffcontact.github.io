@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Differentiable Contact Dynamics for Legged Locomotion</title>
-  <meta name="description" content="A smooth analytic gradient for frictional contact, relaxed only in the backward pass, for policy learning and contact-implicit trajectory optimization in legged locomotion.">
+  <title>DiffContact: Differentiable Contact Dynamics for Policy Learning and Contact-Implicit Trajectory Optimization</title>
+  <meta name="description" content="DiffContact: a smooth analytic gradient for frictional contact, relaxed only in the backward pass, for policy learning and contact-implicit trajectory optimization in legged locomotion.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://diffcontact.github.io/">
-  <meta property="og:title" content="Differentiable Contact Dynamics for Legged Locomotion: Policy Learning and Contact-Implicit Trajectory Optimization">
-  <meta property="og:description" content="A smooth analytic gradient for frictional contact, relaxed only in the backward pass, for policy learning and contact-implicit trajectory optimization in legged locomotion.">
+  <meta property="og:title" content="DiffContact: Differentiable Contact Dynamics for Policy Learning and Contact-Implicit Trajectory Optimization">
+  <meta property="og:description" content="DiffContact: a smooth analytic gradient for frictional contact, relaxed only in the backward pass, for policy learning and contact-implicit trajectory optimization in legged locomotion.">
   <meta property="og:image" content="https://diffcontact.github.io/assets/figures/fig5.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%233d6db3'/%3E%3C/svg%3E">
@@ -35,7 +35,7 @@
 
 <header class="hero">
   <div class="wrap">
-    <h1>Differentiable Contact Dynamics for Legged Locomotion: Policy Learning and Contact-Implicit Trajectory
+    <h1>DiffContact: Differentiable Contact&nbsp;Dynamics for Policy&nbsp;Learning and Contact-Implicit Trajectory
       Optimization</h1>
     <p class="authors">Gijeong Kim, Seungbin Oh, Dongyun Kang, and Hae-Won Park</p>
     <p class="affil">KAIST</p>
@@ -51,9 +51,20 @@
              aria-label="Hardware highlights: push recovery, a slip on low-friction ground, debris, and trotting and pacing on a treadmill">
         <source src="assets/videos/teaser.mp4" type="video/mp4">
       </video>
-      <p class="badge">Trained with 100,000 samples in under 2&nbsp;min on a desktop PC</p>
-      <p class="label">Trotting and pacing policies trained with the proposed gradient using 100,000 samples in under
-        2&nbsp;min on a desktop PC, deployed on hardware.</p>
+      <p class="badge"><span>Trained in under 2&nbsp;min on a desktop PC</span> <span>100× fewer samples than PPO to learn the trot</span></p>
+      <p class="ask">Can one simulated environment teach a quadruped to walk?</p>
+      <p class="label">With the proposed gradient, yes: locomotion policies learned from a single environment run on the
+        real robot.</p>
+    </div>
+
+    <!-- key results, each as the paper states it: Sections VII-B, VII-C, and VIII-C -->
+    <div class="stats">
+      <div class="stat"><b>&lt;&nbsp;2&nbsp;min training time</b><span>on a desktop PC for the trotting and pacing
+        policies, 100,000 samples each</span></div>
+      <div class="stat"><b>100× fewer samples</b><span>than PPO to learn the trot: about 10<sup>5</sup> with one
+        environment, against 10<sup>7</sup> with 128</span></div>
+      <div class="stat"><b>3.4× / 2.5× larger pulls</b><span>recovered by contact&#8209;implicit MPC in simulation than
+        with No&nbsp;Relaxation / Signorini&#8209;Relaxed, averaged over eight directions</span></div>
     </div>
   </div>
 </header>
@@ -336,13 +347,13 @@
     <div class="bib">
       <button type="button" id="copy-bib">Copy</button>
 <pre id="bib-text">@misc{kim2026differentiablecontactdynamicslegged,
-      title={Differentiable Contact Dynamics for Legged Locomotion: Policy Learning and Contact-Implicit Trajectory Optimization},
+      title={Differentiable Contact Dynamics for Legged Locomotion: Policy Learning and Contact-Implicit Trajectory Optimization}, 
       author={Gijeong Kim and Seungbin Oh and Dongyun Kang and Hae-Won Park},
       year={2026},
       eprint={2610.35852},
       archivePrefix={arXiv},
       primaryClass={cs.RO},
-      url={https://arxiv.org/abs/2610.35852},
+      url={https://arxiv.org/abs/2610.35852}, 
 }</pre>
     </div>
   </div>

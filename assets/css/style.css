@@ -58,7 +58,7 @@ nav.top a:hover { color: var(--text); text-decoration: none; }
 header.hero { text-align: center; padding: 3.8rem 0 .5rem; }
 .hero h1 {
   font-size: clamp(1.6rem, 3vw, 2.5rem); line-height: 1.18; letter-spacing: -0.02em;
-  margin: 0 auto; max-width: 62rem; font-weight: 700; text-wrap: balance;
+  margin: 0 auto; max-width: 72rem; font-weight: 700; text-wrap: balance;
 }
 .authors { font-size: 1.1rem; margin: 1.6rem 0 .1rem; }
 .affil { color: var(--muted); font-size: .9rem; margin: 0; }
@@ -76,13 +76,33 @@ header.hero { text-align: center; padding: 3.8rem 0 .5rem; }
 /* ---------- teaser ---------- */
 .teaser { position: relative; margin: 2.2rem auto 0; }   /* the full page column */
 .teaser video { width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); background: #111; }
-/* training budget over the video's top-right corner; the attachment's own scene label sits top-left */
+/* training time and the PPO comparison, a line each, over the video's top-right corner; the attachment's own scene
+   label sits top-left, within the left 25% of the frame */
 .teaser .badge {
-  position: absolute; top: 1rem; right: 1rem; max-width: 55%; margin: 0; padding: .5rem .85rem;
+  position: absolute; top: 1rem; right: 1rem; max-width: 70%; margin: 0; padding: .5rem .85rem;
   border-radius: 10px; background: rgba(12, 14, 18, .66); color: #fff;
-  font-size: 1.08rem; font-weight: 600; line-height: 1.35; text-align: left;
+  font-size: min(1.15rem, 2.55vw); font-weight: 700; line-height: 1.35; text-align: left;
 }
-.teaser .label { margin: .8rem auto 0; color: #2b2f36; font-size: 1.02rem; text-wrap: balance; }
+.teaser .badge span { display: block; }   /* one line each at every width: the font follows the window below ~740 px */
+/* a question under the video, answered by the line below it */
+.teaser .ask {
+  margin: 1.5rem auto 0; font-size: 1.45rem; font-weight: 700; line-height: 1.3; letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+.teaser .label { margin: .45rem auto 0; color: #2b2f36; font-size: 1.08rem; text-wrap: balance; }
+
+/* ---------- key results under the teaser ---------- */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .9rem; margin: 1.8rem 0 0; }
+.stat {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.1rem 1.1rem 1rem;
+  text-align: left;
+}
+.stat b {   /* the number with its keyword, on one line: three columns narrow the box down to 900 px */
+  display: block; font-size: min(1.75rem, 2.3vw); line-height: 1.15; letter-spacing: -0.02em; color: var(--accent);
+}
+.stat span {   /* balanced: the boxes change width at each breakpoint, so a fixed wording can't fill every last line */
+  display: block; margin-top: .5rem; color: var(--muted); font-size: .86rem; line-height: 1.5; text-wrap: balance;
+}
 
 /* ---------- sections ---------- */
 section { padding: 4.4rem 0; }
@@ -152,6 +172,8 @@ figcaption b { color: var(--text); }
 
 @media (max-width: 900px) {
   nav.top .wrap { justify-content: flex-start; }
+  .stats { grid-template-columns: 1fr; }
+  .stat b { font-size: 1.75rem; }
 }
 @media (max-width: 700px) {
   .clips, .clips.three { grid-template-columns: 1fr; }
@@ -162,5 +184,8 @@ figcaption b { color: var(--text); }
   header.hero { padding-top: 2.5rem; }
   section { padding: 2.8rem 0; }
   .abstract, .lead { text-align: left; }
-  .teaser .badge { top: .5rem; right: .5rem; padding: .3rem .55rem; border-radius: 7px; font-size: .74rem; }
+  .stat b { font-size: min(1.75rem, 7.4vw); }
+  .teaser .badge {   /* each line stays whole down to 360-px phones */
+    top: .5rem; right: .5rem; padding: .3rem .55rem; border-radius: 7px; font-size: min(.74rem, 2.55vw);
+  }
 }
