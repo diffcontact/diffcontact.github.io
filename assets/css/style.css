@@ -122,6 +122,7 @@ p, figcaption { text-wrap: pretty; }   /* no one-word last lines where the brows
 section p { max-width: var(--para-w); }
 .lead { max-width: var(--text-w); margin: 0 auto 1rem; text-align: center; font-size: 1.08rem; color: #2b2f36; }
 .abstract { text-align: justify; hyphens: auto; }
+#abstract .text { max-width: 56.5rem; }   /* verbatim text, so the column sets its last line: 0.62–0.70 full, 0.16 at 56rem */
 
 /* ---------- figures ---------- */
 /* a figure spans the page column, with its caption left-aligned under it */

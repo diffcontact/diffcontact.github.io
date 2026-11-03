@@ -72,8 +72,8 @@
 <section id="abstract">
   <div class="wrap text">
     <h2>Abstract</h2>
-    <p class="abstract">This paper proposes a smooth analytic gradient for frictional contact and applies it to policy
-      learning and contact-implicit trajectory optimization for legged locomotion. The exact contact sensitivity is
+    <p class="abstract">This paper proposes DiffContact, a smooth analytic gradient for frictional contact, and applies
+      it to policy learning and contact-implicit trajectory optimization for legged locomotion. The exact contact sensitivity is
       available in closed form but describes changes within the current contact mode, providing no first-order
       information toward neighboring contact modes. The proposed gradient replaces this sensitivity only in the
       backward pass, leaving the hard-contact forward solve unchanged and the realized rollout feasible. A central-path
@@ -340,14 +340,14 @@
   </div>
 </section>
 
-<!-- the entry as arXiv exports it (arxiv.org/bibtex/2610.35852); the page column fits its title line -->
+<!-- arXiv's export (arxiv.org/bibtex/2610.35852) with a short key; the page column fits its title line -->
 <section id="bibtex">
   <div class="wrap">
     <h2>BibTeX</h2>
     <div class="bib">
       <button type="button" id="copy-bib">Copy</button>
-<pre id="bib-text">@misc{kim2026differentiablecontactdynamicslegged,
-      title={Differentiable Contact Dynamics for Legged Locomotion: Policy Learning and Contact-Implicit Trajectory Optimization}, 
+<pre id="bib-text">@misc{kim2026diffcontact,
+      title={DiffContact: Differentiable Contact Dynamics for Policy Learning and Contact-Implicit Trajectory Optimization}, 
       author={Gijeong Kim and Seungbin Oh and Dongyun Kang and Hae-Won Park},
       year={2026},
       eprint={2610.35852},
